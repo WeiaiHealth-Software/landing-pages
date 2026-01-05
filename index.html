@@ -1,323 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>惟翎 · 中央随机化登录</title>
-  <link rel="icon" href="./assets/random-icon.svg">
+  <title>Landing Pages 样板间</title>
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root {
-      --bg: #ffffff;
-      --panel: #fafbfc;
-      --panel-2: #ffffff;
-      --text: #0b1220;
-      --subtext: #607083;
-      --primary: #2563eb;
-      --primary-2: #3b82f6;
-      --border: #e5e9ef;
-      --input-bg: #ffffff;
-      --input-border: #d7dee6;
-      --input-focus: #3b82f6;
-      --success: #34d399;
-      --danger: #ef4444;
-      --radius: 14px;
-      --radius-sm: 8px;
-      --radius-round: 28px;
-    }
-    * {
-      box-sizing: border-box;
-    }
-    html, body {
-      height: 100%;
-    }
     body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    .topbar {
-      position: fixed;
-      top: clamp(10px, 2vw, 20px);
-      left: clamp(10px, 2vw, 20px);
-      z-index: 20;
-    }
-    .logo {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 700;
-      font-size: clamp(20px, 3.2vw, 28px);
-      color: var(--text);
-    }
-    .logo img {
-      width: clamp(22px, 3vw, 28px);
-      height: clamp(22px, 3vw, 28px);
-    }
-    .page {
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: minmax(320px, 1.05fr) minmax(280px, 0.95fr);
-      align-items: stretch;
-    }
-    .left {
-      position: relative;
-      padding: clamp(68px, 6.2vw, 150px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: clamp(20px, 2.6vw, 36px);
-      background: var(--panel-2);
-    }
-    .card {
-      width: min(520px, 100%);
-      border: 0;
-      background: transparent;
-      border-radius: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .card h2 {
-      margin: 0;
-      font-size: clamp(22px, 3vw, 28px);
-      font-weight: 600;
-    }
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .label {
-      font-size: 13px;
-      color: var(--subtext);
-    }
-    .input {
-      width: 100%;
-      height: 44px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--input-border);
-      background: var(--input-bg);
-      color: var(--text);
-      padding: 0 14px;
-      outline: none;
-      transition: border-color .2s, box-shadow .2s;
-    }
-    .input:focus {
-      border-color: var(--input-focus);
-      box-shadow: 0 0 0 3px rgba(92,157,255,0.2);
-    }
-    .actions {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 12px;
-      margin-top: 6px;
-    }
-    .remember {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--subtext);
-      font-size: 13px;
-      user-select: none;
-      cursor: pointer;
-    }
-    .checkbox {
-      width: 18px;
-      height: 18px;
-      border-radius: 6px;
-      border: 1px solid var(--input-border);
-      background: var(--input-bg);
-      appearance: none;
-      outline: none;
-      position: relative;
-    }
-    .checkbox:checked {
-      border-color: var(--success);
-      background: linear-gradient(180deg, #2a3a53, #1f2a3e);
-    }
-    .checkbox:checked::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 9px;
-      height: 9px;
-      transform: translate(-50%, -50%);
-      border-radius: 3px;
-      background: var(--success);
-    }
-    .btn {
-      height: 44px;
-      margin-top: 12px;
-      padding: 0 18px;
-      border-radius: var(--radius-sm);
-      border: 0;
-      color: #fff;
-      font-weight: 600;
-      background: var(--primary);
-      cursor: pointer;
-      font-size: 16px;
-      transition: transform .08s ease;
-    }
-    .btn:active {
-      transform: translateY(1px);
-    }
-    .btn {
-      width: 100%;
-    }
-    .help {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-    }
-    .link {
-      color: var(--primary-2);
-      text-decoration: none;
-    }
-    .right {
-      position: relative;
-      background: var(--panel);
-      overflow: visible;
-      display: grid;
-      place-items: center;
-    }
-    .art-wrap {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      pointer-events: none;
-    }
-    .art {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      right: 0;
-      left: 0;
-      margin-left: -30%;
-      width: 130%;
-      height: 100%;
-      object-fit: contain;
-      object-position: center;
-    }
-    .description {
-      margin-top: 6px;
-      font-weight: 300;
-      font-size: 14px;
-      color: var(--subtext);
-    }
-    .action-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    @media (max-width: 1400px) {
-      .page {
-        grid-template-columns: 1fr 1fr;
-      }
-      .card {
-        width: min(450px, 100%);
-      }
-    }
-    @media (max-width: 1200px) {
-      .page {
-        grid-template-columns: 1fr 1fr;
-      }
-      .card {
-        width: min(380px, 100%);
-      }
-    }
-     @media (max-width: 1024px) {
-      .page {
-        grid-template-columns: 1fr 1fr;
-      }
-      .card {
-        width: min(350px, 100%);
-      }
-    }
-    @media (max-width: 960px) {
-      .page {
-        grid-template-columns: 1fr;
-      }
-      .right {
-        min-height: 42vh;
-        border-top: 1px solid var(--border);
-      }
-      .art {
-        left: 0;
-        width: 100%;
-      }
-    }
-    @media (max-width: 600px) {
-      .left {
-        padding: 20px 16px;
-        gap: 18px;
-      }
-      .card {
-        padding: 18px;
-      }
-      .actions {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .btn {
-        width: 100%;
-      }
-      .help {
-        flex-direction: column;
-        gap: 8px;
-      }
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
     }
   </style>
 </head>
-<body>
-  <header class="topbar">
-    <div class="logo">
-      <img src="assets/random-icon.svg" alt="" />
-      <span>惟翎 · 中央随机化分配系统</span>
+<body class="bg-gray-50 text-slate-900 h-screen flex overflow-hidden">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
+    <div class="h-16 flex justify-center gap-2 items-center px-6 border-b border-gray-100">
+      <svg t="1767577018840" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7365" width="48" height="48"><path d="M291.73 845.65l133.56 49.24 105.42 9.67 97.83-17.58 55.8-22.2 21.83-11.61-62.6-51.62L512 716 291.73 845.65z" fill="#FFE100" p-id="7366"></path><path d="M294.115 833.675l382.627-244.324 15.242 23.87-382.628 244.323z" p-id="7367"></path><path d="M849.51 712.23L497.83 506V119.43h28.33v370.34l337.68 198.02-14.33 24.44z" p-id="7368"></path><path d="M160.125 687.792l344.697-202.07 14.327 24.44-344.696 202.07z" p-id="7369"></path><path d="M248.53 210.4h28.32v429.39h-28.32zM374.93 139.13h28.32v430.84h-28.32zM744.91 616.6h-28.32V419.7l-99.15-55v186.72h-28.32V316.58l155.79 86.45V616.6zM324.248 610.795l15.437-23.743L722.777 836.12l-15.437 23.743z" p-id="7370"></path><path d="M666.17 478.62h28.32v39.96h-28.32z" p-id="7371"></path><path d="M512 918.73c-224.27 0-406.73-182.46-406.73-406.73S287.73 105.27 512 105.27 918.73 287.73 918.73 512 736.27 918.73 512 918.73z m0-785.14c-208.65 0-378.4 169.76-378.4 378.41S303.35 890.41 512 890.41 890.4 720.65 890.4 512 720.65 133.59 512 133.59z" p-id="7372"></path></svg>
+      <span class="text-2xl font-bold text-slate-800 tracking-tight">页面样板间</span>
     </div>
-  </header>
-  <div class="page">
-    <section class="left">
-      <div class="card" role="form" aria-label="登录表单">
-        <h2>
-          欢迎回来
-          <p class="description">使用用户名和密码登录系统</p>
-        </h2>
-        <div class="field">
-          <label class="label" for="username">账号</label>
-          <input class="input" id="username" name="username" type="text" placeholder="请输入账号" autocomplete="username" />
-        </div>
-        <div class="field">
-          <label class="label" for="password">密码</label>
-          <input class="input" id="password" name="password" type="password" placeholder="请输入密码" autocomplete="current-password" />
-        </div>
-        <div class="actions">
-          <div class="action-container">
-            <label class="remember">
-              <input class="checkbox" type="checkbox" id="remember" name="remember" />
-              记住我
-            </label>
-            <label class="remember" for="forget-password">
-              忘记密码？
-            </label>
+    
+    <nav class="flex-1 overflow-y-auto py-4">
+      <ul class="space-y-1 px-3">
+        <li>
+          <button id="tab-login" onclick="switchTab('login')" class="w-full flex items-center px-3 py-2 text-sm font-medium bg-blue-50 text-blue-600 rounded-md transition-colors text-left">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+            </svg>
+            登录页
+          </button>
+        </li>
+        <li>
+          <button id="tab-admin" onclick="switchTab('admin')" class="w-full flex items-center px-3 py-2 text-sm font-medium text-slate-600 hover:bg-gray-50 hover:text-slate-900 rounded-md transition-colors text-left">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+            </svg>
+            Admin 页面
+          </button>
+        </li>
+      </ul>
+    </nav>
+    
+    <div class="p-4 border-t border-gray-100">
+      <div class="text-xs text-gray-400 text-center">
+        &copy; 2026 Landing Pages
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto bg-gray-50/50 p-8">
+    <div class="w-full mx-auto">
+      <header class="mb-8">
+        <h1 class="text-2xl font-bold text-slate-900" id="page-title">登录页模板列表</h1>
+        <p class="text-slate-500 mt-1" id="page-desc">选择一个登录页模板查看详情或进行演示。</p>
+      </header>
+
+      <!-- Content Section: Login -->
+      <div id="content-login" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        
+        <!-- Card 1: Login Page -->
+        <div class="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:border-blue-200 transition-all duration-300 flex flex-col">
+          <div class="aspect-video w-full bg-gray-100 relative overflow-hidden">
+            <img src="templates/demo1.png" alt="Login Page" class="w-full h-full object-fill group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           </div>
-          <button class="btn" type="button">
-              登录
-            </button>
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-lg font-semibold text-slate-900 mb-2">登录页面</h3>
+            <p class="text-sm text-slate-500 mb-4 flex-1 line-clamp-2">
+              现代化左右布局登录页，包含左侧表单区域和右侧全屏背景图展示，适配移Pad端。
+            </p>
+            <a href="demo1.html" target="_blank" class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-100 transition-colors">
+              查看详情
+              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+              </svg>
+            </a>
+          </div>
         </div>
+
+        <!-- Add New Template Placeholder (Login) -->
+         <div class="border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center aspect-[4/5] sm:aspect-auto h-full min-h-[300px] text-gray-300 hover:border-blue-200 hover:text-blue-300 transition-colors cursor-pointer group">
+            <div class="text-center">
+              <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-gray-50 group-hover:bg-blue-50 flex items-center justify-center transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+              </div>
+              <span class="text-sm font-medium">添加新登录页模板</span>
+            </div>
+         </div>
+
       </div>
-    </section>
-    <aside class="right" aria-hidden="true">
-      <div class="art-wrap">
-        <img class="art" src="assets/random-bg.png" alt="" />
+
+      <!-- Content Section: Admin -->
+      <div id="content-admin" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        
+        <!-- Card 1: Admin Page (Placeholder) -->
+        <div class="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col opacity-75 grayscale hover:grayscale-0 hover:opacity-100">
+          <div class="aspect-video w-full bg-slate-100 flex items-center justify-center relative overflow-hidden">
+            <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+            </svg>
+            <div class="absolute top-3 right-3 bg-gray-900/10 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              待补充
+            </div>
+          </div>
+          <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-lg font-semibold text-slate-900 mb-2">Admin 页面</h3>
+            <p class="text-sm text-slate-500 mb-4 flex-1">
+              后台管理系统仪表盘模板，包含数据概览、图表统计和常用管理组件。
+            </p>
+            <button disabled class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-slate-400 bg-slate-100 rounded-lg cursor-not-allowed">
+              开发中
+            </button>
+          </div>
+        </div>
+
+         <!-- Add New Template Placeholder (Admin) -->
+         <div class="border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center aspect-[4/5] sm:aspect-auto h-full min-h-[300px] text-gray-300 hover:border-blue-200 hover:text-blue-300 transition-colors cursor-pointer group">
+            <div class="text-center">
+              <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-gray-50 group-hover:bg-blue-50 flex items-center justify-center transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+              </div>
+              <span class="text-sm font-medium">添加新 Admin 模板</span>
+            </div>
+         </div>
+
       </div>
-    </aside>
-  </div>
+
+    </div>
+  </main>
+
+  <script>
+    function switchTab(tabName) {
+      // 切换内容区域显示
+      document.getElementById('content-login').classList.add('hidden');
+      document.getElementById('content-admin').classList.add('hidden');
+      document.getElementById('content-' + tabName).classList.remove('hidden');
+
+      // 更新 Tab 按钮样式
+      const loginTab = document.getElementById('tab-login');
+      const adminTab = document.getElementById('tab-admin');
+      
+      const activeClass = ['bg-blue-50', 'text-blue-600'];
+      const inactiveClass = ['text-slate-600', 'hover:bg-gray-50', 'hover:text-slate-900'];
+
+      if (tabName === 'login') {
+        loginTab.classList.add(...activeClass);
+        loginTab.classList.remove(...inactiveClass);
+        loginTab.querySelector('svg').classList.add('text-blue-500');
+        loginTab.querySelector('svg').classList.remove('text-slate-400');
+
+        adminTab.classList.remove(...activeClass);
+        adminTab.classList.add(...inactiveClass);
+        adminTab.querySelector('svg').classList.remove('text-blue-500');
+        adminTab.querySelector('svg').classList.add('text-slate-400');
+        
+        document.getElementById('page-title').textContent = '登录页模板列表';
+        document.getElementById('page-desc').textContent = '选择一个登录页模板查看详情或进行演示。';
+      } else {
+        adminTab.classList.add(...activeClass);
+        adminTab.classList.remove(...inactiveClass);
+        adminTab.querySelector('svg').classList.add('text-blue-500');
+        adminTab.querySelector('svg').classList.remove('text-slate-400');
+
+        loginTab.classList.remove(...activeClass);
+        loginTab.classList.add(...inactiveClass);
+        loginTab.querySelector('svg').classList.remove('text-blue-500');
+        loginTab.querySelector('svg').classList.add('text-slate-400');
+        
+        document.getElementById('page-title').textContent = 'Admin 模板列表';
+        document.getElementById('page-desc').textContent = '浏览可用的后台管理系统模板。';
+      }
+    }
+  </script>
 </body>
 </html>

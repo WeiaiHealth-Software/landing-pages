@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>惟翎 · 中央随机化登录</title>
+  <link rel="icon" href="./assets/random-icon.svg">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --panel: #fafbfc;
+      --panel-2: #ffffff;
+      --text: #0b1220;
+      --subtext: #607083;
+      --primary: #2563eb;
+      --primary-2: #3b82f6;
+      --border: #e5e9ef;
+      --input-bg: #ffffff;
+      --input-border: #d7dee6;
+      --input-focus: #3b82f6;
+      --success: #34d399;
+      --danger: #ef4444;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --radius-round: 28px;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .topbar {
+      position: fixed;
+      top: clamp(10px, 2vw, 20px);
+      left: clamp(10px, 2vw, 20px);
+      z-index: 20;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: clamp(20px, 3.2vw, 28px);
+      color: var(--text);
+    }
+    .logo img {
+      width: clamp(22px, 3vw, 28px);
+      height: clamp(22px, 3vw, 28px);
+    }
+    .page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(320px, 1.05fr) minmax(280px, 0.95fr);
+      align-items: stretch;
+    }
+    .left {
+      position: relative;
+      padding: clamp(68px, 6.2vw, 150px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(20px, 2.6vw, 36px);
+      background: var(--panel-2);
+    }
+    .card {
+      width: min(520px, 100%);
+      border: 0;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .card h2 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 28px);
+      font-weight: 600;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .label {
+      font-size: 13px;
+      color: var(--subtext);
+    }
+    .input {
+      width: 100%;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text);
+      padding: 0 14px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .input:focus {
+      border-color: var(--input-focus);
+      box-shadow: 0 0 0 3px rgba(92,157,255,0.2);
+    }
+    .actions {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      margin-top: 6px;
+    }
+    .remember {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--subtext);
+      font-size: 13px;
+      user-select: none;
+      cursor: pointer;
+    }
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      appearance: none;
+      outline: none;
+      position: relative;
+    }
+    .checkbox:checked {
+      border-color: var(--success);
+      background: linear-gradient(180deg, #2a3a53, #1f2a3e);
+    }
+    .checkbox:checked::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 9px;
+      height: 9px;
+      transform: translate(-50%, -50%);
+      border-radius: 3px;
+      background: var(--success);
+    }
+    .btn {
+      height: 44px;
+      margin-top: 12px;
+      padding: 0 18px;
+      border-radius: var(--radius-sm);
+      border: 0;
+      color: #fff;
+      font-weight: 600;
+      background: var(--primary);
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform .08s ease;
+    }
+    .btn:active {
+      transform: translateY(1px);
+    }
+    .btn {
+      width: 100%;
+    }
+    .help {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+    .link {
+      color: var(--primary-2);
+      text-decoration: none;
+    }
+    .right {
+      position: relative;
+      background: var(--panel);
+      overflow: visible;
+      display: grid;
+      place-items: center;
+    }
+    .art-wrap {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+    }
+    .art {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      margin-left: -30%;
+      width: 130%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+    }
+    .description {
+      margin-top: 6px;
+      font-weight: 300;
+      font-size: 14px;
+      color: var(--subtext);
+    }
+    .action-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    @media (max-width: 1400px) {
+      .page {
+        grid-template-columns: 1fr 1fr;
+      }
+      .card {
+        width: min(450px, 100%);
+      }
+    }
+    @media (max-width: 1200px) {
+      .page {
+        grid-template-columns: 1fr 1fr;
+      }
+      .card {
+        width: min(380px, 100%);
+      }
+    }
+     @media (max-width: 1024px) {
+      .page {
+        grid-template-columns: 1fr 1fr;
+      }
+      .card {
+        width: min(350px, 100%);
+      }
+    }
+    @media (max-width: 960px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+      .right {
+        min-height: 42vh;
+        border-top: 1px solid var(--border);
+      }
+      .art {
+        left: 0;
+        width: 100%;
+      }
+    }
+    @media (max-width: 600px) {
+      .left {
+        padding: 20px 16px;
+        gap: 18px;
+      }
+      .card {
+        padding: 18px;
+      }
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .btn {
+        width: 100%;
+      }
+      .help {
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">
+      <img src="assets/random-icon.svg" alt="" />
+      <span>惟翎 · 中央随机化分配系统</span>
+    </div>
+  </header>
+  <div class="page">
+    <section class="left">
+      <div class="card" role="form" aria-label="登录表单">
+        <h2>
+          欢迎回来
+          <p class="description">使用用户名和密码登录系统</p>
+        </h2>
+        <div class="field">
+          <label class="label" for="username">账号</label>
+          <input class="input" id="username" name="username" type="text" placeholder="请输入账号" autocomplete="username" />
+        </div>
+        <div class="field">
+          <label class="label" for="password">密码</label>
+          <input class="input" id="password" name="password" type="password" placeholder="请输入密码" autocomplete="current-password" />
+        </div>
+        <div class="actions">
+          <div class="action-container">
+            <label class="remember">
+              <input class="checkbox" type="checkbox" id="remember" name="remember" />
+              记住我
+            </label>
+            <label class="remember" for="forget-password">
+              忘记密码？
+            </label>
+          </div>
+          <button class="btn" type="button">
+              登录
+            </button>
+        </div>
+      </div>
+    </section>
+    <aside class="right" aria-hidden="true">
+      <div class="art-wrap">
+        <img class="art" src="assets/random-bg.png" alt="" />
+      </div>
+    </aside>
+  </div>
+</body>
+</html>
